@@ -14,12 +14,31 @@ limitations under the License.
 ==============================================================================*/
 
 #include "detection_responder.h"
+#include "ssd1306.h"
+// #include "freertos/FreeRTOS.h"
+// #include "freertos/task.h"
 
 // This dummy implementation writes person and no person scores to the error
 // console. Real applications will want to take some custom action instead, and
 // should implement their own versions of this function.
 void RespondToDetection(tflite::ErrorReporter* error_reporter,
                         uint8_t person_score, uint8_t no_person_score) {
-  TF_LITE_REPORT_ERROR(error_reporter, "person score:%d no person score %d",
-                       person_score, no_person_score);
+    if (person_score > no_person_score) {
+        ssd1306_128x64_i2c_init();
+        ssd1306_setFixedFont(ssd1306xled_font6x8);
+        ssd1306_flipHorizontal(1);
+        ssd1306_flipVertical(1);
+        ssd1306_clearScreen();
+        ssd1306_printFixedN (0, 16, "Person", STYLE_BOLD, FONT_SIZE_2X);
+    } else {
+        ssd1306_128x64_i2c_init();
+        ssd1306_setFixedFont(ssd1306xled_font6x8);
+        ssd1306_flipHorizontal(1);
+        ssd1306_flipVertical(1);
+        ssd1306_clearScreen();
+        ssd1306_printFixedN (0, 16, "No Person", STYLE_BOLD, FONT_SIZE_2X);
+    }
+    // vTaskDelay(1000 / portTICK_PERIOD_MS);
+    TF_LITE_REPORT_ERROR(error_reporter, "person score:%d no person score %d",
+                        person_score, no_person_score);
 }
