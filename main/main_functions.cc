@@ -25,6 +25,13 @@ limitations under the License.
 #include "tensorflow/lite/schema/schema_generated.h"
 #include "tensorflow/lite/version.h"
 
+#include "driver/gpio.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+
+#define BUTTON_BIT_MASK (uint64_t)1<<34
+#define BUTTON_GPIO_NUM GPIO_NUM_34
+
 // Globals, used for compatibility with Arduino-style sketches.
 namespace {
 tflite::ErrorReporter* error_reporter = nullptr;
@@ -83,25 +90,35 @@ void setup() {
 
   // Get information about the memory area to use for the model's input.
   input = interpreter->input(0);
+
+  // Set up GPIO for single button.
+  gpio_config_t io_conf;
+  io_conf.mode = GPIO_MODE_INPUT;
+  io_conf.pin_bit_mask = BUTTON_BIT_MASK;
+  io_conf.pull_up_en = (gpio_pullup_t) 1;
+  gpio_config(&io_conf);
 }
 
 // The name of this function is important for Arduino compatibility.
 void loop() {
-  // Get image from provider.
-  if (kTfLiteOk != GetImage(error_reporter, kNumCols, kNumRows, kNumChannels,
-                            input->data.uint8)) {
-    TF_LITE_REPORT_ERROR(error_reporter, "Image capture failed.");
+  if (!gpio_get_level(BUTTON_GPIO_NUM)) {
+    // Get image from provider.
+    if (kTfLiteOk != GetImage(error_reporter, kNumCols, kNumRows, kNumChannels,
+                              input->data.uint8)) {
+      TF_LITE_REPORT_ERROR(error_reporter, "Image capture failed.");
+    }
+
+    // Run the model on this input and make sure it succeeds.
+    if (kTfLiteOk != interpreter->Invoke()) {
+      TF_LITE_REPORT_ERROR(error_reporter, "Invoke failed.");
+    }
+
+    TfLiteTensor* output = interpreter->output(0);
+
+    // Process the inference results.
+    uint8_t person_score = output->data.uint8[kPersonIndex];
+    uint8_t no_person_score = output->data.uint8[kNotAPersonIndex];
+    RespondToDetection(error_reporter, person_score, no_person_score);
   }
-
-  // Run the model on this input and make sure it succeeds.
-  if (kTfLiteOk != interpreter->Invoke()) {
-    TF_LITE_REPORT_ERROR(error_reporter, "Invoke failed.");
-  }
-
-  TfLiteTensor* output = interpreter->output(0);
-
-  // Process the inference results.
-  uint8_t person_score = output->data.uint8[kPersonIndex];
-  uint8_t no_person_score = output->data.uint8[kNotAPersonIndex];
-  RespondToDetection(error_reporter, person_score, no_person_score);
+  vTaskDelay(50 / portTICK_PERIOD_MS);
 }

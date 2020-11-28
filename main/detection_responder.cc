@@ -15,8 +15,6 @@ limitations under the License.
 
 #include "detection_responder.h"
 #include "ssd1306.h"
-// #include "freertos/FreeRTOS.h"
-// #include "freertos/task.h"
 
 // This dummy implementation writes person and no person scores to the error
 // console. Real applications will want to take some custom action instead, and
@@ -36,9 +34,8 @@ void RespondToDetection(tflite::ErrorReporter* error_reporter,
         ssd1306_flipHorizontal(1);
         ssd1306_flipVertical(1);
         ssd1306_clearScreen();
-        ssd1306_printFixedN (0, 16, "No Person", STYLE_BOLD, FONT_SIZE_2X);
+        ssd1306_printFixedN (0, 16, "Not Person", STYLE_BOLD, FONT_SIZE_2X);
     }
-    // vTaskDelay(1000 / portTICK_PERIOD_MS);
     TF_LITE_REPORT_ERROR(error_reporter, "person score:%d no person score %d",
                         person_score, no_person_score);
 }

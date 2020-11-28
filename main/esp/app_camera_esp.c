@@ -63,5 +63,12 @@ int app_camera_init() {
     ESP_LOGE(TAG, "Camera init failed with error 0x%x", err);
     return -1;
   }
+
+  sensor_t * s = esp_camera_sensor_get();
+  if (!s) {
+    ESP_LOGE(TAG, "Failed to get camera sensor property.");
+    return -1;
+  }
+  s->set_vflip(s, 1);
   return 0;
 }
