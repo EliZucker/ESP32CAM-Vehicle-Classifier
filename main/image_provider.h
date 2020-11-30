@@ -1,5 +1,5 @@
-#ifndef FLIGHT_VEHICLE_CLASSIFIER_IMAGE_PROVIDER_H_
-#define FLIGHT_VEHICLE_CLASSIFIER_IMAGE_PROVIDER_H_
+#ifndef FLYING_VEHICLE_CLASSIFIER_IMAGE_PROVIDER_H_
+#define FLYING_VEHICLE_CLASSIFIER_IMAGE_PROVIDER_H_
 
 #include "tensorflow/lite/c/common.h"
 #include "tensorflow/lite/micro/micro_error_reporter.h"
@@ -21,4 +21,4 @@
 TfLiteStatus GetImage(tflite::ErrorReporter* error_reporter, int image_width,
                       int image_height, int channels, uint8_t* image_data);
 
-#endif  // FLIGHT_VEHICLE_CLASSIFIER_IMAGE_PROVIDER_H_
+#endif  // FLYING_VEHICLE_CLASSIFIER_IMAGE_PROVIDER_H_

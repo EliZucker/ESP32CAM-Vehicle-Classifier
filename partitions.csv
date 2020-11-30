@@ -1,4 +1,5 @@
 # A custom partition scheme is needed for this project's model size.
+# Specifically, increased the application partition from 1MB -> 2MG.
 # ESP-IDF Partition Table
 # Name,   Type, SubType, Offset,  Size, Flags
 nvs,      data, nvs,     0x9000,  0x6000,

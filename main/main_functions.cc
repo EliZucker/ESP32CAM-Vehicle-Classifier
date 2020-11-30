@@ -2,7 +2,7 @@
 
 #include "image_provider.h"
 #include "model_settings.h"
-#include "flight_vehicle_model_data.h"
+#include "flying_vehicle_model_data.h"
 #include "tensorflow/lite/micro/micro_error_reporter.h"
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
@@ -39,7 +39,7 @@ void setup() {
 
   // Map the model into a usable data structure. This doesn't involve any
   // copying or parsing, it's a very lightweight operation.
-  model = tflite::GetModel(g_flight_vehicle_model_data);
+  model = tflite::GetModel(g_flying_vehicle_model_data);
   if (model->version() != TFLITE_SCHEMA_VERSION) {
     TF_LITE_REPORT_ERROR(error_reporter,
                          "Model provided is schema version %d not equal "

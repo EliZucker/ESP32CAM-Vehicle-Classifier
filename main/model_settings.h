@@ -1,5 +1,5 @@
-#ifndef FLIGHT_VEHICLE_MODEL_SETTINGS_H_
-#define FLIGHT_VEHICLE_MODEL_SETTINGS_H_
+#ifndef FLYING_VEHICLE_MODEL_SETTINGS_H_
+#define FLYING_VEHICLE_MODEL_SETTINGS_H_
 
 // Keeping these as constant expressions allow us to allocate fixed-sized arrays
 // on the stack for our working memory.
@@ -15,4 +15,4 @@ constexpr int kMaxImageSize = kNumCols * kNumRows * kNumChannels;
 constexpr int kCategoryCount = 5;
 extern const char* kCategoryLabels[kCategoryCount];
 
-#endif  // FLIGHT_VEHICLE_MODEL_SETTINGS_H_
+#endif  // FLYING_VEHICLE_MODEL_SETTINGS_H_

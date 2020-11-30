@@ -1,16 +1,9 @@
-# ESP32-Classifier
-
-project desc
-TFLite Micro
-Local inference
-Deep learning
-
-```
-get_idf
-idf.py build
-```
+# Flying Vehicle Classifier on ESP32
 
 <img align="left" width="340" src="demo_vid.gif" />
+
+## Project Summary
+A standalone module that classifies and displays 
 
 ## TODO
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-** &nbsp;Refactor code
@@ -25,3 +18,15 @@ idf.py build
 
 ## Test
 test
+
+
+
+project desc
+TFLite Micro
+Local inference
+Deep learning
+
+```
+get_idf
+idf.py build
+```
