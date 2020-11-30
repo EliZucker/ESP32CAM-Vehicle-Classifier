@@ -27,7 +27,7 @@ constexpr int kNumChannels = 1;
 
 constexpr int kMaxImageSize = kNumCols * kNumRows * kNumChannels;
 
-constexpr int kCategoryCount = 3;
+constexpr int kCategoryCount = 6;
 constexpr int kPersonIndex = 1;
 constexpr int kNotAPersonIndex = 2;
 extern const char* kCategoryLabels[kCategoryCount];

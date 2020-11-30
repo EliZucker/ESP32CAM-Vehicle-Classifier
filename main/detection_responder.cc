@@ -14,28 +14,28 @@ limitations under the License.
 ==============================================================================*/
 
 #include "detection_responder.h"
+#include "model_settings.h"
 #include "ssd1306.h"
 
 // This dummy implementation writes person and no person scores to the error
 // console. Real applications will want to take some custom action instead, and
 // should implement their own versions of this function.
 void RespondToDetection(tflite::ErrorReporter* error_reporter,
-                        uint8_t person_score, uint8_t no_person_score) {
-    if (person_score > no_person_score) {
-        ssd1306_128x64_i2c_init();
-        ssd1306_setFixedFont(ssd1306xled_font6x8);
-        ssd1306_flipHorizontal(1);
-        ssd1306_flipVertical(1);
-        ssd1306_clearScreen();
-        ssd1306_printFixedN (0, 16, "Person", STYLE_BOLD, FONT_SIZE_2X);
-    } else {
-        ssd1306_128x64_i2c_init();
-        ssd1306_setFixedFont(ssd1306xled_font6x8);
-        ssd1306_flipHorizontal(1);
-        ssd1306_flipVertical(1);
-        ssd1306_clearScreen();
-        ssd1306_printFixedN (0, 16, "Not Person", STYLE_BOLD, FONT_SIZE_2X);
+                        uint8_t highest_scoring_class_index) {
+    ssd1306_128x64_i2c_init();
+    ssd1306_setFixedFont(ssd1306xled_font6x8);
+    ssd1306_flipHorizontal(1);
+    ssd1306_flipVertical(1);
+    ssd1306_clearScreen();
+    ssd1306_printFixedN (0, 16, kCategoryLabels[highest_scoring_class_index], STYLE_BOLD, FONT_SIZE_2X);
+
+    // Hacky: manually add 2nd word to fighter jet/passenger plane labels:
+    if (highest_scoring_class_index == 1) {
+        ssd1306_printFixedN (0, 45, "Jet", STYLE_BOLD, FONT_SIZE_2X);
     }
-    TF_LITE_REPORT_ERROR(error_reporter, "person score:%d no person score %d",
-                        person_score, no_person_score);
+    else if (highest_scoring_class_index == 4) {
+        ssd1306_printFixedN (0, 45, "Plane", STYLE_BOLD, FONT_SIZE_2X);
+    }
+    TF_LITE_REPORT_ERROR(error_reporter, "Highest scoring class index: %d",
+                        highest_scoring_class_index);
 }

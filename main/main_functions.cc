@@ -40,7 +40,7 @@ tflite::MicroInterpreter* interpreter = nullptr;
 TfLiteTensor* input = nullptr;
 
 // An area of memory to use for input, output, and intermediate arrays.
-constexpr int kTensorArenaSize = 93 * 1024;
+constexpr int kTensorArenaSize = 152 * 1024;
 static uint8_t tensor_arena[kTensorArenaSize];
 }  // namespace
 
@@ -71,10 +71,14 @@ void setup() {
   //
   // tflite::AllOpsResolver resolver;
   // NOLINTNEXTLINE(runtime-global-variables)
-  static tflite::MicroMutableOpResolver<3> micro_op_resolver;
+  static tflite::MicroMutableOpResolver<7> micro_op_resolver(error_reporter);
   micro_op_resolver.AddAveragePool2D();
   micro_op_resolver.AddConv2D();
   micro_op_resolver.AddDepthwiseConv2D();
+  micro_op_resolver.AddFullyConnected();
+  micro_op_resolver.AddMean();
+  micro_op_resolver.AddPad();
+  micro_op_resolver.AddQuantize();
 
   // Build an interpreter to run the model with.
   static tflite::MicroInterpreter static_interpreter(
@@ -116,9 +120,15 @@ void loop() {
     TfLiteTensor* output = interpreter->output(0);
 
     // Process the inference results.
-    uint8_t person_score = output->data.uint8[kPersonIndex];
-    uint8_t no_person_score = output->data.uint8[kNotAPersonIndex];
-    RespondToDetection(error_reporter, person_score, no_person_score);
+    int8_t highest_score = output->data.int8[0];
+    uint8_t highest_index = 0;
+    for (uint8_t i = 1; i < 6; ++i) {
+      if (output->data.int8[i] >= highest_score) {
+        highest_score = output->data.int8[i];
+        highest_index = i;
+      }
+    }
+    RespondToDetection(error_reporter, highest_index);
   }
   vTaskDelay(50 / portTICK_PERIOD_MS);
 }
