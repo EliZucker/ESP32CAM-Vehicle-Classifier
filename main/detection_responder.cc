@@ -33,7 +33,7 @@ void RespondToDetection(tflite::ErrorReporter* error_reporter,
     if (highest_scoring_class_index == 1) {
         ssd1306_printFixedN (0, 45, "Jet", STYLE_BOLD, FONT_SIZE_2X);
     }
-    else if (highest_scoring_class_index == 4) {
+    else if (highest_scoring_class_index == 3) {
         ssd1306_printFixedN (0, 45, "Plane", STYLE_BOLD, FONT_SIZE_2X);
     }
     TF_LITE_REPORT_ERROR(error_reporter, "Highest scoring class index: %d",

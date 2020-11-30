@@ -19,7 +19,6 @@ const char* kCategoryLabels[kCategoryCount] = {
     "Drone",
     "Fighter",
     "Helicopter",
-    "Missile",
     "Passenger",
     "Rocket",
 };
