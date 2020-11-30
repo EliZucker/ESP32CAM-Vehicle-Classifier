@@ -1,4 +1,5 @@
-// Modifications copyright (C) 2020 Eli Zucker
+/* Modifications copyright (C) 2020 Eli Zucker */
+
 /* Copyright 2019 The TensorFlow Authors. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -107,18 +108,18 @@ void setup() {
 }
 
 void loop() {
-  // Continously wait for button press. Poll every 50ms.
+  // Wait for button press. Poll every 50ms.
   vTaskDelay(50 / portTICK_PERIOD_MS);
   if (!gpio_get_level(BUTTON_GPIO_NUM)) {
-    // Get image from provider (96 x 96 x 1).
-    uint8_t image_data[96*96];
+    // Capture image immediately following button press.
+    uint8_t image_data[kMaxImageSize];
     if (kTfLiteOk != GetImage(error_reporter, kNumCols, kNumRows, kNumChannels,
                               image_data)) {
       TF_LITE_REPORT_ERROR(error_reporter, "Image capture failed.");
     }
 
     // Manually convert uint8 pixel data to scaled int8 for quantized network input.
-    for (int i = 0; i < (96*96); ++i) {
+    for (int i = 0; i < (kMaxImageSize); ++i) {
       int pixel_val = (int) image_data[i];
       input->data.int8[i] = (int8_t) (pixel_val - 128);
     }
@@ -137,8 +138,8 @@ void loop() {
 void RespondToDetection(TfLiteTensor* output) {
   // Find index of label with highest score.
   int8_t highest_score = output->data.int8[0];
-  uint8_t highest_scoring_class_index = 0;
-  for (uint8_t i = 1; i < 5; ++i) {
+  int highest_scoring_class_index = 0;
+  for (int i = 1; i < kCategoryCount; ++i) {
     if (output->data.int8[i] >= highest_score) {
       highest_score = output->data.int8[i];
       highest_scoring_class_index = i;

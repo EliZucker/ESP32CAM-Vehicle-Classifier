@@ -1,3 +1,5 @@
+/* Modifications copyright (C) 2020 Eli Zucker */
+
 /* Copyright 2019 The TensorFlow Authors. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,6 +48,7 @@ limitations under the License.
  */
 #define CAMERA_FRAME_SIZE FRAMESIZE_96X96
 
+// Modified specifically for TTGO T-Camera ESP32 Module.
 #define PWDN_GPIO_NUM    26
 #define RESET_GPIO_NUM   -1
 #define XCLK_GPIO_NUM    32
@@ -63,6 +66,7 @@ limitations under the License.
 #define VSYNC_GPIO_NUM   27
 #define HREF_GPIO_NUM    25
 #define PCLK_GPIO_NUM    19
+#define FLIP_CAMERA      1
 
 #define XCLK_FREQ 20000000
 

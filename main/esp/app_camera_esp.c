@@ -1,3 +1,5 @@
+/* Modifications copyright (C) 2020 Eli Zucker */
+
 /* Copyright 2019 The TensorFlow Authors. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,20 +20,6 @@ limitations under the License.
 static const char *TAG = "app_camera";
 
 int app_camera_init() {
-#if CONFIG_CAMERA_MODEL_ESP_EYE
-  /* IO13, IO14 is designed for JTAG by default,
-   * to use it as generalized input,
-   * firstly declair it as pullup input */
-  gpio_config_t conf;
-  conf.mode = GPIO_MODE_INPUT;
-  conf.pull_up_en = GPIO_PULLUP_ENABLE;
-  conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
-  conf.intr_type = GPIO_INTR_DISABLE;
-  conf.pin_bit_mask = 1LL << 13;
-  gpio_config(&conf);
-  conf.pin_bit_mask = 1LL << 14;
-  gpio_config(&conf);
-#endif
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
   config.ledc_timer = LEDC_TIMER_0;
@@ -69,6 +57,8 @@ int app_camera_init() {
     ESP_LOGE(TAG, "Failed to get camera sensor property.");
     return -1;
   }
-  s->set_vflip(s, 1);
+
+  // Camera may need to be flipped depending on hardware.
+  s->set_vflip(s, FLIP_CAMERA);
   return 0;
 }

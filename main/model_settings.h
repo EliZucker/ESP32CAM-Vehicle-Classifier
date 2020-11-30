@@ -1,3 +1,5 @@
+/* Modifications copyright (C) 2020 Eli Zucker */
+
 /* Copyright 2019 The TensorFlow Authors. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,8 +30,6 @@ constexpr int kNumChannels = 1;
 constexpr int kMaxImageSize = kNumCols * kNumRows * kNumChannels;
 
 constexpr int kCategoryCount = 5;
-constexpr int kPersonIndex = 1;
-constexpr int kNotAPersonIndex = 2;
 extern const char* kCategoryLabels[kCategoryCount];
 
 #endif  // TENSORFLOW_LITE_MICRO_EXAMPLES_PERSON_DETECTION_MODEL_SETTINGS_H_
