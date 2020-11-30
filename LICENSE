@@ -1,3 +1,7 @@
+(Some TFLite Micro callers and ESP32-interaction code is from the "person-detector" example, which is under this license).
+
+Modifications copyright (C) 2020 Eli Zucker
+
 Copyright 2019 The TensorFlow Authors.  All rights reserved.
 
                                  Apache License
