@@ -1,3 +1,4 @@
+// Modifications copyright (C) 2020 Eli Zucker
 /* Copyright 2019 The TensorFlow Authors. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +16,6 @@ limitations under the License.
 
 #include "main_functions.h"
 
-#include "detection_responder.h"
 #include "image_provider.h"
 #include "model_settings.h"
 #include "person_detect_model_data.h"
@@ -26,6 +26,7 @@ limitations under the License.
 #include "tensorflow/lite/version.h"
 
 #include "driver/gpio.h"
+#include "ssd1306.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
@@ -68,17 +69,14 @@ void setup() {
   // An easier approach is to just use the AllOpsResolver, but this will
   // incur some penalty in code space for op implementations that are not
   // needed by this graph.
-  //
-  // tflite::AllOpsResolver resolver;
   // NOLINTNEXTLINE(runtime-global-variables)
-  static tflite::MicroMutableOpResolver<7> micro_op_resolver(error_reporter);
+  static tflite::MicroMutableOpResolver<6> micro_op_resolver(error_reporter);
   micro_op_resolver.AddAveragePool2D();
   micro_op_resolver.AddConv2D();
   micro_op_resolver.AddDepthwiseConv2D();
   micro_op_resolver.AddFullyConnected();
   micro_op_resolver.AddMean();
   micro_op_resolver.AddPad();
-  micro_op_resolver.AddQuantize();
 
   // Build an interpreter to run the model with.
   static tflite::MicroInterpreter static_interpreter(
@@ -101,15 +99,28 @@ void setup() {
   io_conf.pin_bit_mask = BUTTON_BIT_MASK;
   io_conf.pull_up_en = (gpio_pullup_t) 1;
   gpio_config(&io_conf);
+
+  // Clear OLED.
+  ssd1306_128x64_i2c_init();
+  ssd1306_setFixedFont(ssd1306xled_font6x8);
+  ssd1306_clearScreen();
 }
 
-// The name of this function is important for Arduino compatibility.
 void loop() {
+  // Continously wait for button press. Poll every 50ms.
+  vTaskDelay(50 / portTICK_PERIOD_MS);
   if (!gpio_get_level(BUTTON_GPIO_NUM)) {
-    // Get image from provider.
+    // Get image from provider (96 x 96 x 1).
+    uint8_t image_data[96*96];
     if (kTfLiteOk != GetImage(error_reporter, kNumCols, kNumRows, kNumChannels,
-                              input->data.uint8)) {
+                              image_data)) {
       TF_LITE_REPORT_ERROR(error_reporter, "Image capture failed.");
+    }
+
+    // Manually convert uint8 pixel data to scaled int8 for quantized network input.
+    for (int i = 0; i < (96*96); ++i) {
+      int pixel_val = (int) image_data[i];
+      input->data.int8[i] = (int8_t) (pixel_val - 128);
     }
 
     // Run the model on this input and make sure it succeeds.
@@ -117,18 +128,34 @@ void loop() {
       TF_LITE_REPORT_ERROR(error_reporter, "Invoke failed.");
     }
 
-    TfLiteTensor* output = interpreter->output(0);
-
     // Process the inference results.
-    int8_t highest_score = output->data.int8[0];
-    uint8_t highest_index = 0;
-    for (uint8_t i = 1; i < 6; ++i) {
-      if (output->data.int8[i] >= highest_score) {
-        highest_score = output->data.int8[i];
-        highest_index = i;
-      }
-    }
-    RespondToDetection(error_reporter, highest_index);
+    TfLiteTensor* output = interpreter->output(0);
+    RespondToDetection(output);
   }
-  vTaskDelay(50 / portTICK_PERIOD_MS);
+}
+
+void RespondToDetection(TfLiteTensor* output) {
+  // Find index of label with highest score.
+  int8_t highest_score = output->data.int8[0];
+  uint8_t highest_scoring_class_index = 0;
+  for (uint8_t i = 1; i < 5; ++i) {
+    if (output->data.int8[i] >= highest_score) {
+      highest_score = output->data.int8[i];
+      highest_scoring_class_index = i;
+    }
+  }
+
+  // Display highest scoring label on OLED display.
+  ssd1306_128x64_i2c_init();
+  ssd1306_setFixedFont(ssd1306xled_font6x8);
+  ssd1306_clearScreen();
+  ssd1306_printFixedN (0, 16, kCategoryLabels[highest_scoring_class_index], STYLE_BOLD, FONT_SIZE_2X);
+
+  // Manually add 2nd word to fighter jet/passenger plane labels special case.
+  if (highest_scoring_class_index == 1) {
+      ssd1306_printFixedN (0, 45, "Jet", STYLE_BOLD, FONT_SIZE_2X);
+  }
+  else if (highest_scoring_class_index == 3) {
+      ssd1306_printFixedN (0, 45, "Plane", STYLE_BOLD, FONT_SIZE_2X);
+  }
 }
