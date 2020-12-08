@@ -1,7 +1,7 @@
 #include "tensorflow/lite/c/common.h"
 
-#ifndef FLYING_VEHICLE_CLASSIFIER_MAIN_FUNCTIONS_H_
-#define FLYING_VEHICLE_CLASSIFIER_MAIN_FUNCTIONS_H_
+#ifndef MATERIALS_CLASSIFIER_MAIN_FUNCTIONS_H_
+#define MATERIALS_CLASSIFIER_MAIN_FUNCTIONS_H_
 
 // Expose a C friendly interface for main functions.
 #ifdef __cplusplus
@@ -24,4 +24,4 @@ void RespondToDetection(TfLiteTensor* output);
 }
 #endif
 
-#endif  // FLYING_VEHICLE_CLASSIFIER_MAIN_FUNCTIONS_H_
+#endif  // MATERIALS_CLASSIFIER_MAIN_FUNCTIONS_H_
