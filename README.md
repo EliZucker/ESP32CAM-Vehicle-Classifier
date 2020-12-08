@@ -1,6 +1,6 @@
-# Materials Classifier (ESP32-CAM)
+# Material Classifier (ESP32-CAM)
 
-<img align="left" width="300" src="demo_vid.gif" />
+<img align="left" width="410" src="demo_vid.gif" />
 
 ## Overview
 This project aims to create a small, energy-efficient, standalone module that can classify several types of materials via camera.
