@@ -1,14 +1,14 @@
-# Material Classifier (ESP32-CAM)
+# Flying Vehicle Classifier (ESP32-CAM)
 
-<img align="left" width="410" src="demo_vid.gif" />
+<img align="left" width="300" src="demo_vid.gif" />
 
 ## Overview
-This project aims to create a small, energy-efficient, standalone module that can classify several types of materials via camera.
+This project aims to create a small, energy-efficient, standalone module that can classify several types of flying vehicles.
 
 An ESP32-CAM microcontroller running this code will take a photo from the on-board rear camera, run inference via a local pre-trained model, and display the classification result on its OLED display. This sequence is triggered by a manual button press. Currently, the project is configured specifically for pinouts on the [LILYGO TTGO T-Camera ESP32](https://www.aliexpress.com/item/32968683765.html?spm=a219c.10010108.1000016.1.17c16021VtcUmV&isOrigTitle=true) (~$15).
 
 ## Features
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-** &nbsp;Material classification model is trained from scratch, based on the MobileNetV1 architecture, and further compressed with full integer quantization of weights.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-** &nbsp;Vehicle classification model is trained from scratch, based on the MobileNetV1 architecture, and further compressed with full integer quantization of weights.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-** &nbsp;Completely local inference on the ESP32 platform.
 

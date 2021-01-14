@@ -2,7 +2,7 @@
 
 #include "image_provider.h"
 #include "model_settings.h"
-#include "materials_model_data.h"
+#include "flying_vehicle_model_data.h"
 #include "tensorflow/lite/micro/micro_error_reporter.h"
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
@@ -39,7 +39,7 @@ void setup() {
 
   // Map the model into a usable data structure. This doesn't involve any
   // copying or parsing, it's a very lightweight operation.
-  model = tflite::GetModel(g_materials_model_data);
+  model = tflite::GetModel(g_flying_vehicle_model_data);
   if (model->version() != TFLITE_SCHEMA_VERSION) {
     TF_LITE_REPORT_ERROR(error_reporter,
                          "Model provided is schema version %d not equal "
@@ -134,4 +134,12 @@ void RespondToDetection(TfLiteTensor* output) {
   ssd1306_setFixedFont(ssd1306xled_font6x8);
   ssd1306_clearScreen();
   ssd1306_printFixedN (0, 16, kCategoryLabels[highest_scoring_class_index], STYLE_BOLD, FONT_SIZE_2X);
+
+  // Manually add 2nd word to fighter jet/passenger plane labels special case.
+  if (highest_scoring_class_index == 1) {
+      ssd1306_printFixedN (0, 45, "Jet", STYLE_BOLD, FONT_SIZE_2X);
+  }
+  else if (highest_scoring_class_index == 3) {
+      ssd1306_printFixedN (0, 45, "Plane", STYLE_BOLD, FONT_SIZE_2X);
+  }
 }

@@ -1,5 +1,5 @@
-#ifndef MATERIALS_CLASSIFIER_ESP_APP_CAMERA_ESP_H_
-#define MATERIALS_CLASSIFIER_ESP_APP_CAMERA_ESP_H_
+#ifndef FLYING_VEHICLE_CLASSIFIER_ESP_APP_CAMERA_ESP_H_
+#define FLYING_VEHICLE_CLASSIFIER_ESP_APP_CAMERA_ESP_H_
 
 #include "esp_camera.h"
 #include "esp_log.h"
@@ -62,4 +62,4 @@ int app_camera_init();
 #ifdef __cplusplus
 }
 #endif
-#endif  // MATERIALS_CLASSIFIER_ESP_APP_CAMERA_ESP_H_
+#endif  // FLYING_VEHICLE_CLASSIFIER_ESP_APP_CAMERA_ESP_H_
